@@ -1,11 +1,18 @@
 const express = require("express");
-const cors = require("cors");
-const {Pool} = require("pg");
+const path = require("path");
+const { Pool } = require("pg");
+const bcrypt = require("bcryptjs");
+const session = require("express-session");
+const pgSession = require("connect-pg-simple")(session);
 require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 3000;
-app.use(cors());
 app.use(express.json());
+app.use(
+    express.static(
+        path.join(__dirname, "../frontend")
+    )
+);
 const pool = new Pool({
     host : process.env.DB_HOST,
     port : process.env.DB_PORT,
@@ -13,12 +20,29 @@ const pool = new Pool({
     user : process.env.DB_USER,
     password : process.env.DB_PASSWORD
 });
-app.get("/",(_req, res) => {
+app.use(
+    session({
+        secret : process.env.SESSION_SECRET,
+        resave : false,
+        saveUninitialized : false,
+        store : new pgSession({
+            pool : pool,
+            createTableIfMissing : true
+        }),
+        cookie : {
+            httpOnly : true,
+            secure : false,
+            sameSite : "lax",
+            maxAge : 1000 * 60 * 60 * 24 * 7
+        }
+    })
+);
+app.get("/api",(_req, res) => {
     res.json({
         "message" : "bn -r"
     });
 });
-app.get("/api/test-db",async (_req,res) => {
+app.get("/api/test-db",async (_req, res) => {
     try{
         const result=await pool.query("SELECT NOW() AS current_time");
         res.json({
@@ -29,14 +53,14 @@ app.get("/api/test-db",async (_req,res) => {
         });
     }
     catch(error){
-        console.error("Database connection error:",error);
+        console.error("Database connection error:", error);
         res.status(500).json({
             "success" : false,
             "message" : "db -fail"
         });
     }
 });
-app.post("/api/login",async (req,res) => {
+app.post("/api/login",async (req, res) => {
     try {
         const {username,password} = req.body;
         if (!username || !password) {
@@ -45,18 +69,20 @@ app.post("/api/login",async (req,res) => {
                 "message" : "un pw -req"
             });
         }
-        const cleanusername = username.trim();
+        const clean_username = username.trim();
         const result = await pool.query(
             `
             SELECT
                 id,
                 username,
+                email,
                 password_hash
             FROM users
             WHERE email = $1
+               OR username = $1
             LIMIT 1
             `,
-            [cleanusername]
+            [clean_username]
         );
         if (result.rows.length === 0) {
             return res.status(401).json({
@@ -65,11 +91,11 @@ app.post("/api/login",async (req,res) => {
             });
         }
         const user = result.rows[0];
-        const passwordMatch = await bcrypt.compare(
+        const password_match = await bcrypt.compare(
             password,
             user.password_hash
         );
-        if (!passwordMatch) {
+        if (!password_match) {
             return res.status(401).json({
                 "success" : false,
                 "message" : "un pw -inv"
@@ -86,42 +112,42 @@ app.post("/api/login",async (req,res) => {
         });
     }
     catch (error) {
-        console.error("Login error:",error);
+        console.error("Login error:", error);
         res.status(500).json({
             "success" : false,
             "message" :"sv -err"
         });
     }
 });
-app.post("/api/register",async (req,res) => {
+app.post("/api/register",async (req, res) => {
     try{
         const{username,password} = req.body;
-        if(!username||!password) {
+        if (!username || !password) {
             return res.status(400).json({
                 "success" : false,
                 "message" : "un pw -req"
             });
         }
-        const cleanUsername=username.trim();
-        if(cleanUsername.length<3){
+        const clean_username=username.trim();
+        if (clean_username.length < 3) {
             return res.status(400).json({
                 "success" : false,
                 "message" : "un -short"
             });
         }
-        if(cleanUsername.length>50){
+        else if (clean_username.length > 50) {
             return res.status(400).json({
                 "success" : false,
                 "message" : "un -long"
             });
         }
-        if(password.length<6){
+        if (password.length < 6) {
             return res.status(400).json({
                 "success" : false,
                 "message" : "pw -short"
             });
         }
-        const existingUser = await pool.query(
+        const existing_user = await pool.query(
             `
             SELECT id, username
             FROM users
@@ -129,19 +155,19 @@ app.post("/api/register",async (req,res) => {
             LIMIT 1
             `,
             [
-                cleanUsername
+                clean_username
             ]
         );
-        if(existingUser.rows.length>0){
-            const user = existingUser.rows[0];
-            if(user.username === cleanUsername){
+        if (existing_user.rows.length > 0) {
+            const user = existing_user.rows[0];
+            if(user.username === clean_username){
                 return res.status(409).json({
                     "success" : false,
                     "message" : "un -taken"
                 });
             }
         }
-        const passwordHash = await bcrypt.hash(password, 10);
+        const password_hash = await bcrypt.hash(password, 10);
         const result = await pool.query(
             `
             INSERT INTO users
@@ -157,22 +183,22 @@ app.post("/api/register",async (req,res) => {
             RETURNING
                 id,
                 username,
-                created_at
+                created_time
             `,
             [
-                cleanUsername,
-                passwordHash
+                clean_username,
+                password_hash
             ]
         );
-        const newUser = result.rows[0];
+        const new_user = result.rows[0];
         res.status(201).json({
             "success" : true,
             "message" : "acc -suc",
-            "user" : newUser
+            "user" : new_user
         });
     }
     catch(error){
-        console.error("Registration error:",error);
+        console.error("Registration error:", error);
         if (error.code === "23505") {
             return res.status(409).json({
                 "success" : false,
@@ -185,6 +211,6 @@ app.post("/api/register",async (req,res) => {
         });
     }
 });
-app.listen(PORT,()=>{
+app.listen(PORT, () => {
     console.log("server running");
 });

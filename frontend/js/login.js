@@ -34,7 +34,7 @@ document.getElementById("enter").addEventListener("click", async () => {
             return;
         }
         setTimeout(() => {
-            window.location.href = "login.html";
+            window.location.href = "lobby.html";
         },1500);
     }
     catch (error) {
