@@ -1,0 +1,120 @@
+body{
+    background-color: white;
+    overflow: hidden;
+}
+span{
+    color: white;
+    cursor: default;
+    user-select: none;
+}
+input{
+    background-color: white;
+    transition: 100ms;
+}
+input:hover,input:focus{
+    outline: none;
+    box-shadow: 0px 0px 50px 20px white;
+}
+span,input{
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+#board{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    width: 90vw;
+    height: 90vh;
+    background-color: gray;
+    border-radius: 100px;
+}
+#login_span{
+    top: 15%;
+    font-size: 4em;
+}
+#username_span{
+    top: 30%;
+    font-size: 2em;
+}
+#username_input{
+    top: 40%;
+}
+#username_error{
+    left: 40% !important;
+    top: 40%;
+    color: red !important;
+    opacity: 0;
+}
+#password_span{
+    top: 50%;
+    font-size: 2em;
+}
+#password_input{
+    top: 60%;
+}
+#visionable{
+    position: absolute;
+    left: 60%;
+    top: 60%;
+    width: 25px;
+    cursor: pointer;
+    -webkit-user-drag: none;
+    user-select: none;
+}
+#password_error{
+    left: 40% !important;
+    top: 60%;
+    color: red !important;
+    opacity: 0;
+}
+#enter{
+    position: absolute;
+    left: 50%;
+    top: 70%;
+    transform: translateX(-50%);
+    width: 10%;
+    height: 5%;
+    border: 1px white solid;
+    border-radius: 1000px;
+    cursor: pointer;
+}
+#enter:hover #arrow,#enter:active #arrow{
+    left: 80% !important;
+}
+#enter_span{
+    left: 35% !important;
+    top: 50%;
+    transform: translate(-50%,-50%) !important;
+    cursor: pointer !important;
+}
+#arrow{
+    left: 75% !important;
+    top: 45%;
+    transform: translate(-50%,-50%) !important;
+    cursor: pointer !important;
+    transition: 100ms;
+}
+#signup{
+    top: 80%;
+    color: blue !important;
+    cursor: pointer;
+}
+#signup:hover,#signup:active{
+    color: yellow !important;
+}
+#error{
+    position: absolute;
+    left: 50%;
+    bottom: 0px;
+    transform: translateX(-50%);
+    width: 120vw;
+    height: 10vh;
+    background: red;
+    opacity: 0;
+}
+#error_span{
+    top: 0px;
+    font-size: xx-large;
+}
