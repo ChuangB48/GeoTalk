@@ -1,6 +1,6 @@
 const express = require("express");
 const path = require("path");
-const { Pool } = require("pg");
+const {Pool} = require("pg");
 const bcrypt = require("bcryptjs");
 const session = require("express-session");
 const pgSession = require("connect-pg-simple")(session);
@@ -10,10 +10,10 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(
     express.static(
-        path.join(__dirname, "../frontend")
+        path.join(__dirname,"../frontend")
     )
 );
-const pool = new Pool({
+const pool=new Pool({
     host : process.env.DB_HOST,
     port : process.env.DB_PORT,
     database : process.env.DB_NAME,
@@ -33,7 +33,7 @@ app.use(
             httpOnly : true,
             secure : false,
             sameSite : "lax",
-            maxAge : 1000 * 60 * 60 * 24 * 7
+            maxAge : 1000 * 60
         }
     })
 );
@@ -101,6 +101,7 @@ app.post("/api/login",async (req, res) => {
                 "message" : "un pw -inv"
             });
         }
+        req.session.userId = user.id;
         res.json({
             "success" : true,
             "message" : "log -suc",
@@ -205,6 +206,46 @@ app.post("/api/register",async (req, res) => {
                 "message" : "un -taken"
             });
         }
+        res.status(500).json({
+            "success" : false,
+            "message" : "sv -err"
+        });
+    }
+});
+app.get("/api/me",async (req, res) => {
+    try {
+        if (!req.session.userId) {
+            return res.status(401).json({
+                "success" : false,
+                "message" : "login -n"
+            });
+        }
+        const result = await pool.query(
+            `
+            SELECT
+                id,
+                username,
+                email
+            FROM users
+            WHERE id = $1
+            LIMIT 1
+                `,
+            [req.session.userId]
+        );
+        if (result.rows.length === 0) {
+            req.session.destroy(() => {});
+            return res.status(401).json({
+                "success" : false,
+                "message" : "us -nf"
+            });
+        }
+        res.json({
+            "success" : true,
+            "user" : result.rows[0]
+        });
+    }
+    catch (error) {
+        console.error("Get current user error:",error);
         res.status(500).json({
             "success" : false,
             "message" : "sv -err"

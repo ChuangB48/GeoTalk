@@ -30,11 +30,11 @@ span,input{
     background-color: gray;
     border-radius: 100px;
 }
-#login_span{
+#login_text{
     top: 15%;
     font-size: 4em;
 }
-#username_span{
+#username_text{
     top: 30%;
     font-size: 2em;
 }
@@ -47,7 +47,7 @@ span,input{
     color: red !important;
     opacity: 0;
 }
-#password_span{
+#password_text{
     top: 50%;
     font-size: 2em;
 }
@@ -83,7 +83,7 @@ span,input{
 #enter:hover #arrow,#enter:active #arrow{
     left: 80% !important;
 }
-#enter_span{
+#enter_text{
     left: 35% !important;
     top: 50%;
     transform: translate(-50%,-50%) !important;
@@ -114,7 +114,7 @@ span,input{
     background: red;
     opacity: 0;
 }
-#error_span{
+#error_text{
     top: 0px;
     font-size: xx-large;
 }

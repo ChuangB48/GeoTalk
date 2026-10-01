@@ -1,0 +1,119 @@
+body{
+    background-color: white;
+    overflow: hidden;
+}
+div{
+    overflow: hidden;
+box-shadow: 0px 0px 1px 0px black inset;
+}
+#container{
+    position: absolute;
+    left: 50%;
+    top: 0px;
+    transform: translateX(-50%);
+    width: 120vw;
+    height: 10vh;
+    background-color: gray;
+    overflow: visible !important;
+}
+#logo{
+    position: absolute;
+    left: 0px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50vw;
+    height: 10vh;
+}
+#logo_text{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    color: white;
+    font-size: 3em;
+}
+#section{
+    position: absolute;
+    left: 75%;
+    top: 0px;
+    transform: translateX(-50%);
+    width: 10vh;
+    height: 100%;
+    z-index: 1;
+    transition: 100ms;
+}
+#section:hover{
+    width: 15vh;
+    height: 500%;
+}
+#avatar{
+    position: absolute;
+    left: 50%;
+    top: 0px;
+    transform: translateX(-50%);
+    width: 10vh;
+    height: 10vh;
+    border-radius: 50%;
+}
+#username{
+    position: absolute;
+    left: 50%;
+    top: 10vh;
+    transform: translateX(-50%);
+    width: 15vh;
+    height: 5vh;
+}
+#username_text{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+}
+#board{
+    position: absolute;
+    left: 50%;
+    top: 10%;
+    transform: translateX(-50%);
+    width: 100%;
+    height: 85%;
+    border-radius: 10px;
+}
+#zoomin{
+    position: absolute;
+    left: 80%;
+    bottom: 0px;
+    width: 5%;
+    height: 5%;
+}
+#zoomin_text{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+}
+#zoomout{
+    position: absolute;
+    left: 85%;
+    bottom: 0px;
+    width: 5%;
+    height: 5%;
+}
+#zoomout_text{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+}
+#location{
+    position: absolute;
+    left: 90%;
+    bottom: 0px;
+    width: 5%;
+    height: 5%;
+}
+#location_text{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+}
