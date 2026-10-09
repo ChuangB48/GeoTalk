@@ -1,12 +1,12 @@
-const express = require("express");
-const path = require("path");
-const {Pool} = require("pg");
-const bcrypt = require("bcryptjs");
-const session = require("express-session");
-const pgSession = require("connect-pg-simple")(session);
+const express=require("express");
+const path=require("path");
+const {Pool}=require("pg");
+const bcrypt=require("bcryptjs");
+const session=require("express-session");
+const pgSession=require("connect-pg-simple")(session);
 require("dotenv").config();
-const app = express();
-const PORT = process.env.PORT || 3000;
+const app=express();
+const PORT=process.env.PORT||3000;
 app.use(express.json());
 app.use(
     express.static(
@@ -14,63 +14,63 @@ app.use(
     )
 );
 const pool=new Pool({
-    host : process.env.DB_HOST,
-    port : process.env.DB_PORT,
-    database : process.env.DB_NAME,
-    user : process.env.DB_USER,
-    password : process.env.DB_PASSWORD
+    host:process.env.DB_HOST,
+    port:process.env.DB_PORT,
+    database:process.env.DB_NAME,
+    user:process.env.DB_USER,
+    password:process.env.DB_PASSWORD
 });
 app.use(
     session({
-        secret : process.env.SESSION_SECRET,
-        resave : false,
-        saveUninitialized : false,
-        store : new pgSession({
-            pool : pool,
-            createTableIfMissing : true
+        secret:process.env.SESSION_SECRET,
+        resave:false,
+        saveUninitialized:false,
+        store:new pgSession({
+            pool:pool,
+            createTableIfMissing:true
         }),
-        cookie : {
-            httpOnly : true,
-            secure : false,
-            sameSite : "lax",
-            maxAge : 1000 * 60
+        cookie:{
+            httpOnly:true,
+            secure:false,
+            sameSite:"lax",
+            maxAge:1000 * 60
         }
     })
 );
-app.get("/api",(_req, res) => {
+app.get("/api",(_req, res)=>{
     res.json({
-        "message" : "bn -r"
+        "message":"bn -r"
     });
 });
-app.get("/api/test-db",async (_req, res) => {
+app.get("/api/test-db",async(_req, res)=>{
     try{
         const result=await pool.query("SELECT NOW() AS current_time");
         res.json({
-            "success" : true,
-            "message" : "db -con",
-            "database" : process.env.DB_NAME,
-            "current_time" : result.rows[0].current_time
+            "success":true,
+            "message":"db -con",
+            "database":process.env.DB_NAME,
+            "current_time":result.rows[0].current_time
         });
     }
     catch(error){
-        console.error("Database connection error:", error);
+        console.error("Database connection error:",error);
         res.status(500).json({
-            "success" : false,
-            "message" : "db -fail"
+            "success":false,
+            "message":"db -fail"
         });
     }
 });
-app.post("/api/login",async (req, res) => {
-    try {
-        const {username,password} = req.body;
-        if (!username || !password) {
+app.post("/api/login",async(req,res)=>{
+    try{
+        const {username,password}=req.body;
+        if(!username||!password){
             return res.status(400).json({
-                "success" : false,
-                "message" : "un pw -req"
+                "success":false,
+                "message":"un pw -req"
             });
         }
-        const clean_username = username.trim();
-        const result = await pool.query(
+        const clean_username=username.trim();
+        const result=await pool.query(
             `
             SELECT
                 id,
@@ -84,71 +84,71 @@ app.post("/api/login",async (req, res) => {
             `,
             [clean_username]
         );
-        if (result.rows.length === 0) {
+        if(result.rows.length===0){
             return res.status(401).json({
-                "success" : false,
-                "message" : "un pw -inv"
+                "success":false,
+                "message":"un pw -inv"
             });
         }
-        const user = result.rows[0];
-        const password_match = await bcrypt.compare(
+        const user=result.rows[0];
+        const password_match=await bcrypt.compare(
             password,
             user.password_hash
         );
-        if (!password_match) {
+        if(!password_match){
             return res.status(401).json({
-                "success" : false,
-                "message" : "un pw -inv"
+                "success":false,
+                "message":"un pw -inv"
             });
         }
-        req.session.userId = user.id;
+        req.session.userId=user.id;
         res.json({
-            "success" : true,
-            "message" : "log -suc",
-            "user" : {
-                "id" : user.id,
-                "username" : user.username,
-                "email" : user.email
+            "success":true,
+            "message":"log -suc",
+            "user":{
+                "id":user.id,
+                "username":user.username,
+                "email":user.email
             }
         });
     }
-    catch (error) {
-        console.error("Login error:", error);
+    catch(error){
+        console.error("Login error:",error);
         res.status(500).json({
-            "success" : false,
-            "message" :"sv -err"
+            "success":false,
+            "message":"sv -err"
         });
     }
 });
-app.post("/api/register",async (req, res) => {
+app.post("/api/register",async(req,res)=>{
     try{
-        const{username,password} = req.body;
-        if (!username || !password) {
+        const{username,password}=req.body;
+        if(!username||!password){
             return res.status(400).json({
-                "success" : false,
-                "message" : "un pw -req"
+                "success":false,
+                "message":"un pw -req"
             });
         }
         const clean_username=username.trim();
-        if (clean_username.length < 3) {
+        if(clean_username.length<3){
             return res.status(400).json({
-                "success" : false,
-                "message" : "un -short"
+                "success":false,
+                "message":"un -short"
             });
         }
-        else if (clean_username.length > 50) {
+        else if(clean_username.length>50){
             return res.status(400).json({
-                "success" : false,
-                "message" : "un -long"
+                "success":false,
+                "message":"un -long"
             });
         }
-        if (password.length < 6) {
+        if(password.length<6){
             return res.status(400).json({
-                "success" : false,
-                "message" : "pw -short"
+                "success":false,
+                "message":"pw -short"
             });
         }
-        const existing_user = await pool.query(
+        const existing_user=await pool.query(
             `
             SELECT id, username
             FROM users
@@ -159,17 +159,17 @@ app.post("/api/register",async (req, res) => {
                 clean_username
             ]
         );
-        if (existing_user.rows.length > 0) {
-            const user = existing_user.rows[0];
-            if(user.username === clean_username){
+        if(existing_user.rows.length>0){
+            const user=existing_user.rows[0];
+            if(user.username===clean_username){
                 return res.status(409).json({
-                    "success" : false,
-                    "message" : "un -taken"
+                    "success":false,
+                    "message":"un -taken"
                 });
             }
         }
-        const password_hash = await bcrypt.hash(password, 10);
-        const result = await pool.query(
+        const password_hash=await bcrypt.hash(password, 10);
+        const result=await pool.query(
             `
             INSERT INTO users
             (
@@ -191,67 +191,67 @@ app.post("/api/register",async (req, res) => {
                 password_hash
             ]
         );
-        const new_user = result.rows[0];
+        const new_user=result.rows[0];
         res.status(201).json({
-            "success" : true,
-            "message" : "acc -suc",
-            "user" : new_user
+            "success":true,
+            "message":"acc -suc",
+            "user":new_user
         });
     }
     catch(error){
-        console.error("Registration error:", error);
-        if (error.code === "23505") {
+        console.error("Registration error:",error);
+        if (error.code==="23505") {
             return res.status(409).json({
-                "success" : false,
-                "message" : "un -taken"
+                "success":false,
+                "message":"un -taken"
             });
         }
         res.status(500).json({
-            "success" : false,
-            "message" : "sv -err"
+            "success":false,
+            "message":"sv -err"
         });
     }
 });
-app.get("/api/me",async (req, res) => {
-    try {
-        if (!req.session.userId) {
+app.get("/api/me",async(req,res)=>{
+    try{
+        if(!req.session.userId){
             return res.status(401).json({
-                "success" : false,
-                "message" : "login -n"
+                "success":false,
+                "message":"login -n"
             });
         }
-        const result = await pool.query(
+        const result=await pool.query(
             `
-            SELECT
-                id,
-                username,
-                email
-            FROM users
-            WHERE id = $1
-            LIMIT 1
-                `,
+                SELECT
+                    id,
+                    username,
+                    email
+                FROM users
+                WHERE id = $1
+                LIMIT 1
+            `,
             [req.session.userId]
         );
-        if (result.rows.length === 0) {
-            req.session.destroy(() => {});
+        if(result.rows.length===0){
+            req.session.destroy(()=>{});
             return res.status(401).json({
-                "success" : false,
-                "message" : "us -nf"
+                "success":false,
+                "message":"us -nf"
             });
         }
         res.json({
-            "success" : true,
-            "user" : result.rows[0]
+            "success":true,
+            "user":result.rows[0]
         });
     }
-    catch (error) {
+    catch(error){
         console.error("Get current user error:",error);
         res.status(500).json({
-            "success" : false,
-            "message" : "sv -err"
+            "success":false,
+            "message":"sv -err"
         });
     }
 });
-app.listen(PORT, () => {
+app.listen(PORT,()=>{
     console.log("server running");
 });
