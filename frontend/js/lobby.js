@@ -1,33 +1,7 @@
 let map;
-const posts=[
-    {
-        id:1,
-        username:"Alice",
-        title:"台北今天天氣很好",
-        body:"第一次來台北，今天天氣真的很好！",
-        lat:25.0330,
-        lng:121.5654
-    },{
-        id:2,
-        username:"Bob",
-        title:"東京的晚上",
-        body:"東京晚上真的很漂亮。",
-        lat:35.6762,
-        lng:139.6503
-    },{
-        id:3,
-        username:"Charlie",
-        title:"Hello New York",
-        body:"Greetings from New York City!",
-        lat:40.7128,
-        lng:-74.0060
-    }
-];
 let postOverlays=[];
 async function initMap(){
-    console.log("Starting Google Maps...");
     const {Map}=await google.maps.importLibrary("maps");
-    console.log("Google Maps API detected.");
     const worldCenter={
         lat:20,
         lng:0
@@ -42,9 +16,6 @@ async function initMap(){
             fullscreenControl:false
         }
     );
-    console.log("Google Maps loaded.");
-    console.log("Map width:",document.getElementById("map").offsetWidth);
-    console.log("Map height:",document.getElementById("map").offsetHeight);
     class PostOverlay extends google.maps.OverlayView {
         constructor(post,map){
             super();
@@ -54,23 +25,26 @@ async function initMap(){
             this.setMap(map);
         }
         onAdd(){
-            console.log("Adding post overlay:",this.post.username);
             this.div=document.createElement("div");
             this.div.className="post-card";
             this.div.innerHTML=`
                 <div class="post-card-username">
-                    ${escapeHTML(this.post.username)}
+                    ${escapeHTML(this.post.username||"未知使用者")}
+                </div>
+                <div class="post-card-category">
+                    ${escapeHTML(this.post.category||"未分類")}
                 </div>
                 <div class="post-card-title">
-                    ${escapeHTML(this.post.title)}
+                    ${escapeHTML(this.post.title||"")}
                 </div>
                 <div class="post-card-body">
-                    ${escapeHTML(shortenText(this.post.body,45))}
+                    ${escapeHTML(
+                        shortenText(this.post.body||"",45)
+                    )}
                 </div>
             `;
             const panes=this.getPanes();
             panes.floatPane.appendChild(this.div);
-            console.log("Post card added to Google Maps:",this.post.username);
         }
         draw(){
             if(!this.div){
@@ -89,21 +63,52 @@ async function initMap(){
             this.div.style.left=position.x + "px";
             this.div.style.top=position.y+"px";
             this.div.style.display="block";
-            console.log("Post position:",this.post.username,position.x,position.y);
         }
         onRemove(){
-            console.log("Removing post overlay:",this.post.username);
             if(this.div&&this.div.parentNode){
                 this.div.parentNode.removeChild(this.div);
             }
             this.div=null;
         }
     }
-    posts.forEach(function(post){
-        const overlay=new PostOverlay(post,map);
-        postOverlays.push(overlay);
-    });
-    console.log("Total post overlays:",postOverlays.length);
+    try{
+        const response=await fetch("/api/posts",{
+            credentials:"same-origin"
+        });
+        if(!response.ok){
+            throw new Error(
+                `Failed to fetch posts: HTTP ${response.status}`
+            );
+        }
+        const data=await response.json();
+        const posts=data.posts;
+        if(!Array.isArray(posts)){
+            throw new Error(
+                "API response does not contain a posts array."
+            );
+        }
+        posts.forEach(post=>{
+            const latitude=Number(post.lat);
+            const longitude=Number(post.lng);
+            if(!Number.isFinite(latitude)||!Number.isFinite(longitude)||latitude<-90||latitude>90||longitude<-180||longitude>180){
+                console.warn("Skipped post with invalid coordinates:",post.id);
+                return;
+            }
+            const mapPost={
+                ...post,
+                lat:latitude,
+                lng:longitude
+            };
+            const overlay=new PostOverlay(
+                mapPost,
+                map
+            );
+            postOverlays.push(overlay);
+        });
+    }
+    catch(error){
+        console.error("Failed to load map posts:",error);
+    }
 }
 function shortenText(text,maxLength){
     if(text.length<=maxLength){

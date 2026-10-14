@@ -94,6 +94,15 @@ body{
     border-right: 8px solid transparent;
     border-top: 8px solid white;
 }
+.post-card-category {
+    display: inline-block;
+    margin-bottom: 6px;
+    padding: 3px 7px;
+    border-radius: 5px;
+    background-color: #f0f2f5;
+    color: #555;
+    font-size: 11px;
+}
 
 
 div{

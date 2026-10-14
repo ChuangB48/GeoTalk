@@ -343,6 +343,47 @@ app.get("/api/me",async(req,res)=>{
         });
     }
 });
+// ==================================================
+// GeoTalk：取得地圖上的貼文
+// GET /api/posts
+// ==================================================
+app.get("/api/posts",async(req,res)=>{
+    try{
+        const result=await pool.query(
+            `SELECT
+                p.id,
+                p.user_id,
+                COALESCE(u.username, '未知使用者') AS username,
+                p.title,
+                p.body,
+                p.tags,
+                p.lat,
+                p.lng,
+                p.location_type,
+                p.location_name
+             FROM posts AS p
+             LEFT JOIN users AS u
+                ON u.id = p.user_id
+             WHERE p.lat IS NOT NULL
+               AND p.lng IS NOT NULL
+             ORDER BY p.id DESC
+             LIMIT 200`
+        );
+        // 將資料回傳給前端
+        res.status(200).json({
+            "posts":result.rows
+        });
+    }
+    catch(error){
+        console.error(
+            "Fetch posts failed:",
+            error
+        );
+        res.status(500).json({
+            error: "Failed to fetch posts."
+        });
+    }
+});
 app.post("/api/posts",async(req,res)=>{
     try{
         const userId=req.session?.userId??req.session?.user?.id;
