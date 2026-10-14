@@ -27,24 +27,39 @@ async function initMap(){
         onAdd(){
             this.div=document.createElement("div");
             this.div.className="post-card";
+            this.div.style.cursor="pointer";
+            this.div.style.pointerEvents="auto";
+            this.div.tabIndex=0;
+            this.div.setAttribute("role","button");
+            this.div.setAttribute(
+                "aria-label",
+                "查看完整貼文：" + (this.post.title || "")
+            );
+            const category=this.post.category??this.post.tag??"未分類";
             this.div.innerHTML=`
-                <div class="post-card-username">
-                    ${escapeHTML(this.post.username||"未知使用者")}
-                </div>
-                <div class="post-card-tag">
-                    ${escapeHTML(this.post.tag||"未分類")}
-                </div>
                 <div class="post-card-title">
-                    ${escapeHTML(this.post.title||"")}
+                    ${escapeHTML(this.post.title || "")}
                 </div>
-                <div class="post-card-body">
-                    ${escapeHTML(
-                        shortenText(this.post.body||"",45)
-                    )}
+                <div class="post-card-username">
+                    ${escapeHTML(this.post.username || "未知使用者")}
+                </div>
+                <div class="post-card-category">
+                    ${escapeHTML(category)}
                 </div>
             `;
+            this.div.addEventListener("click",(event)=>{
+                event.stopPropagation();
+                showPostDetail(this.post);
+            });
+            this.div.addEventListener("keydown",(event)=>{
+                if(event.key==="Enter"||event.key===" "){
+                    event.preventDefault();
+                    event.stopPropagation();
+                    showPostDetail(this.post);
+                }
+            });
             const panes=this.getPanes();
-            panes.floatPane.appendChild(this.div);
+            panes.overlayMouseTarget.appendChild(this.div);
         }
         draw(){
             if(!this.div){
@@ -121,6 +136,24 @@ function shortenText(text,maxLength){
         ) + "..."
     );
 }
+function showPostDetail(post){
+    document.getElementById("title").innerText=post.title||"";
+    document.getElementById("tag").innerText=post.category??post.tags??"未分類";
+    document.getElementById("user").innerText=post.username||"未知使用者";
+    document.getElementById("content").innerText=post.body||"";
+    document.getElementById("article").style.zIndex="1";
+    document.getElementById("back").focus();
+}
+function closePostDetail(){
+    document.getElementById("article").style.zIndex="-1";
+}
+document.getElementById("back").addEventListener("click",closePostDetail);
+document.getElementById("map").addEventListener("click",closePostDetail);
+document.addEventListener("keydown",(event)=>{
+    if(event.key=="Escape"&&document.getElementById("article").style.zIndex!="-1"){
+        closePostDetail();
+    }
+});
 function escapeHTML(text){
     const div=document.createElement("div");
     div.textContent=text;

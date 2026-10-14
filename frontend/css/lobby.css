@@ -30,6 +30,75 @@ body{
     pointer-events: none;
     z-index: 1;
 }
+#article{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    width: 90%;
+    height: 90%;
+    background-color: white;
+    opacity: 0.8;
+    z-index: -1;
+}
+#back{
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    width: 5%;
+    height: 5%;
+    cursor: pointer;
+    overflow: hidden;
+}
+#back_text{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    font-size: xx-large;
+    cursor: pointer;
+    user-select: none;
+}
+#title{
+    position: absolute;
+    left: 10%;
+    top: 10%;
+    font-size: 3em;
+    width: 40%;
+    height: 15%;
+    overflow: auto;
+    word-wrap: break-word;
+}
+#tag{
+    position: absolute;
+    left: 50%;
+    top: 10%;
+    font-size: 1.5em;
+    width: 40%;
+    height: 15%;
+    overflow: auto;
+    word-wrap: break-word;
+}
+#user{
+    position: absolute;
+    left: 10%;
+    top: 30%;
+    font-size: 1em;
+    width: 80%;
+    height: 5%;
+    overflow: auto;
+    word-wrap: break-word;
+}
+#content{
+    position: absolute;
+    left: 10%;
+    top: 40%;
+    font-size: 2em;
+    width: 80%;
+    height: 60%;
+    overflow: auto;
+    word-wrap: break-word;
+}
 #post{
     position: absolute;
     left: 50%;
