@@ -7,6 +7,7 @@ const pgSession=require("connect-pg-simple")(session);
 require("dotenv").config();
 const app=express();
 const PORT=process.env.PORT||3000;
+const API_BASE = "https://geotalk.onrender.com/";
 app.use(express.json());
 app.use(
     express.static(
@@ -132,12 +133,12 @@ async function getCoordinatesForArea(area){
     console.log("Geocode cache saved:", queryText);
     return saved.rows[0];
 }
-app.get("/api",(_req, res)=>{
+app.get(`${API_BASE}/api`,(_req, res)=>{
     res.json({
         "message":"bn -r"
     });
 });
-app.get("/api/test-db",async(_req, res)=>{
+app.get(`${API_BASE}/api/tast-db`,async(_req, res)=>{
     try{
         const result=await pool.query("SELECT NOW() AS current_time");
         res.json({
@@ -155,7 +156,7 @@ app.get("/api/test-db",async(_req, res)=>{
         });
     }
 });
-app.post("/api/login",async(req,res)=>{
+app.post(`${API_BASE}/api/login`,async(req,res)=>{
     try{
         const {username,password}=req.body;
         if(!username||!password){
@@ -215,7 +216,7 @@ app.post("/api/login",async(req,res)=>{
         });
     }
 });
-app.post("/api/register",async(req,res)=>{
+app.post(`${API_BASE}/api/register`,async(req,res)=>{
     try{
         const{username,password}=req.body;
         if(!username||!password){
@@ -307,7 +308,7 @@ app.post("/api/register",async(req,res)=>{
         });
     }
 });
-app.get("/api/me",async(req,res)=>{
+app.get(`${API_BASE}/api/me`,async(req,res)=>{
     try{
         if(!req.session.userId){
             return res.status(401).json({
@@ -351,7 +352,7 @@ app.get("/api/me",async(req,res)=>{
 // GeoTalk：取得地圖上的貼文
 // GET /api/posts
 // ==================================================
-app.get("/api/posts",async(req,res)=>{
+app.get(`${API_BASE}/api/posts`,async(req,res)=>{
     try{
         const result=await pool.query(
             `SELECT
@@ -388,7 +389,7 @@ app.get("/api/posts",async(req,res)=>{
         });
     }
 });
-app.post("/api/posts",async(req,res)=>{
+app.post(`${API_BASE}/api/posts`,async(req,res)=>{
     try{
         const userId=req.session?.userId??req.session?.user?.id;
         if(!userId){
