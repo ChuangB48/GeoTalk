@@ -33,18 +33,17 @@ async function initMap(){
             this.div.setAttribute("role","button");
             this.div.setAttribute(
                 "aria-label",
-                "查看完整貼文：" + (this.post.title || "")
+                "查看完整貼文：" + (this.post.title||"")
             );
-            const category=this.post.category??this.post.tag??"未分類";
             this.div.innerHTML=`
                 <div class="post-card-title">
-                    ${escapeHTML(this.post.title || "")}
+                    ${escapeHTML(this.post.title||"")}
                 </div>
                 <div class="post-card-username">
-                    ${escapeHTML(this.post.username || "未知使用者")}
+                    ${escapeHTML(this.post.username||"未知使用者")}
                 </div>
                 <div class="post-card-category">
-                    ${escapeHTML(category)}
+                    ${escapeHTML(this.post.category??this.post.tag??this.post.tags??"未分類")}
                 </div>
             `;
             this.div.addEventListener("click",(event)=>{
