@@ -31,8 +31,8 @@ async function initMap(){
                 <div class="post-card-username">
                     ${escapeHTML(this.post.username||"未知使用者")}
                 </div>
-                <div class="post-card-category">
-                    ${escapeHTML(this.post.category||"未分類")}
+                <div class="post-card-tag">
+                    ${escapeHTML(this.post.tag||"未分類")}
                 </div>
                 <div class="post-card-title">
                     ${escapeHTML(this.post.title||"")}
