@@ -1,4 +1,4 @@
-document.getElementById("create").addEventListener("click",async()=>{
+async function regist(){
     document.getElementById("username_error").style.opacity="0";
     document.getElementById("password_error").style.opacity="0";
     document.getElementById("confirm_error").style.opacity="0";
@@ -43,7 +43,13 @@ document.getElementById("create").addEventListener("click",async()=>{
     catch(error){
         err(error);
     }
-});
+}
+document.getElementById("create").addEventListener("click",regist);
+document.addEventListener("keydown",event=>{
+    if(event.key=="Enter"){
+        regist();
+    }
+})
 document.getElementById("visionable").addEventListener("mousedown",()=>{
     document.getElementById("password_input").type="text";
     document.getElementById("visionable").src="images/visionable.png";

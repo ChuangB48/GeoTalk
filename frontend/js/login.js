@@ -1,4 +1,4 @@
-document.getElementById("enter").addEventListener("click",async()=>{
+async function login(){
     document.getElementById("username_error").style.opacity="0";
     document.getElementById("password_error").style.opacity="0";
     document.getElementById("error_board").style.opacity="0";
@@ -38,7 +38,13 @@ document.getElementById("enter").addEventListener("click",async()=>{
     catch(error){
         err(error);
     }
-});
+}
+document.getElementById("enter").addEventListener("click",login);
+document.addEventListener("keydown",(event)=>{
+    if(event.key=="Enter"){
+        login();
+    }
+})
 document.getElementById("visionable").addEventListener("mousedown",()=>{
     document.getElementById("password_input").type="text";
     document.getElementById("visionable").src="images/visionable.png";
