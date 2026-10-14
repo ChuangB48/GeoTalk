@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>
+            POST
+        </title>
+        <link rel="stylesheet" href="css/header.css">
+        <link rel="stylesheet" href="css/post.css">
+    </head>
+    <body>
+        <div id="header">
+            <div id="logo">
+                <span id="logo_text">
+                    GeoTalk
+                </span>
+            </div>
+            <div id="personal">
+                <div id="avatar">
+                </div>
+                <div id="username">
+                    <span id="username_text">
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div id="board">
+            <span id="title">
+                新增貼文
+            </span>
+            <span id="title_text">
+                標題:
+            </span>
+            <input type="text" id="title_input">
+            <span id="content_text">
+                內容:
+            </span>
+            <textarea id="content_input"></textarea>
+            <span id="tag_text">
+                類別:
+            </span>
+            <select id="tag_input">
+                <option value="life" selected>
+                    日常
+                </option>
+                <option value="school">
+                    學校
+                </option>
+            </select>
+            <div id="enter">
+                <span id="enter_text">
+                    發文
+                </span>
+            </div>
+        </div>
+        <div id="error_board">
+            <span id="error_msg"></span>
+        </div>
+        <script src="js/header.js"></script>
+        <script src="js/post.js"></script>
+    </body>
+</html>

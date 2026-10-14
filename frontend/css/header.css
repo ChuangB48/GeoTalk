@@ -1,0 +1,70 @@
+#header{
+    position: absolute;
+    left: 50%;
+    top: 0px;
+    transform: translateX(-50%);
+    width: 120vw;
+    height: 10vh;
+    background-color: gray;
+    overflow: visible;
+}
+#logo{
+    position: absolute;
+    left: 0px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50vw;
+    height: 10vh;
+    overflow: hidden;
+}
+#logo_text{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    color: white;
+    font-size: 3em;
+    cursor: pointer;
+    user-select: none;
+}
+#personal{
+    position: absolute;
+    left: 75%;
+    top: 0px;
+    transform: translateX(-50%);
+    width: 10vh;
+    height: 100%;
+    overflow: hidden;
+    transition: 100ms;
+}
+#personal:hover{
+    width: 30vh;
+}
+#avatar{
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 10vh;
+    height: 10vh;
+    border-radius: 50%;
+    overflow: hidden;
+}
+#username{
+    position: absolute;
+    right: 0px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20vh;
+    height: 100%;
+    overflow: visible;
+    opacity: 0;
+}
+#username_text{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+}
+#personal:hover #username{
+    opacity: 1;
+}

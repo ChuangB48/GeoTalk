@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta charset="UTF-8">
         <title>
             GeoTalk
         </title>
+        <link rel="stylesheet" href="css/header.css">
         <link rel="stylesheet" href="css/lobby.css">
     </head>
     <body>
@@ -25,12 +27,13 @@
         <div id="board">
             <div id="map"></div>
             <div id="post_board"></div>
-            <div id="location">
-                <span id="location_text">
-                    ◎
-                </span>
-            </div>
         </div>
+        <div id="post">
+            <span id="post_text">
+                +
+            </span>
+        </div>
+        <script src="js/header.js"></script>
         <script src="js/lobby.js"></script>
         <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBgHXud4qwezGSDeJAT20BdReZ3TRGK1hs&loading=async&callback=initMap"></script>
     </body>

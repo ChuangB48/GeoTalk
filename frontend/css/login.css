@@ -28,7 +28,7 @@ span,input{
     width: 90vw;
     height: 90vh;
     background-color: gray;
-    border-radius: 100px;
+    border-radius: 25px;
 }
 #login_text{
     top: 15%;
@@ -104,7 +104,7 @@ span,input{
 #signup:hover,#signup:active{
     color: yellow !important;
 }
-#error{
+#error_board{
     position: absolute;
     left: 50%;
     bottom: 0px;
@@ -114,7 +114,7 @@ span,input{
     background: red;
     opacity: 0;
 }
-#error_text{
+#error_msg{
     top: 0px;
     font-size: xx-large;
 }

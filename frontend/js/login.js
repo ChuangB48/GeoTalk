@@ -1,7 +1,7 @@
 document.getElementById("enter").addEventListener("click",async()=>{
     document.getElementById("username_error").style.opacity="0";
     document.getElementById("password_error").style.opacity="0";
-    document.getElementById("error").style.opacity="0";
+    document.getElementById("error_board").style.opacity="0";
     if(!document.getElementById("username_input").value||!document.getElementById("password_input").value){
         if(!document.getElementById("username_input").value&&!document.getElementById("password_input").value){
             err(0);
@@ -48,22 +48,22 @@ document.getElementById("visionable").addEventListener("mouseup",()=>{
     document.getElementById("visionable").src="images/invisionable.png";
 });
 function err(msg){
-    document.getElementById("error").style.opacity="1";
+    document.getElementById("error_board").style.opacity="1";
     if(msg==0){
-        document.getElementById("error_text").innerText="Please enter your username and password.";
+        document.getElementById("error_msg").innerText="Please enter your username and password.";
         document.getElementById("username_error").style.opacity="1";
         document.getElementById("password_error").style.opacity="1";
     }
     else if(msg==1){
-        document.getElementById("error_text").innerText="Please enter your username.";
+        document.getElementById("error_msg").innerText="Please enter your username.";
         document.getElementById("username_error").style.opacity="1";
     }
     else if(msg==2){
-        document.getElementById("error_text").innerText="Please enter your password.";
+        document.getElementById("error_msg").innerText="Please enter your password.";
         document.getElementById("password_error").style.opacity="1";
     }
     else {
-        document.getElementById("error_text").innerText=msg;
+        document.getElementById("error_msg").innerText=msg;
         document.getElementById("password_error").style.opacity="1";
     }
 }

@@ -37,6 +37,97 @@ app.use(
         }
     })
 );
+let geocodeQueue=Promise.resolve();
+let lastGeocodeRequestAt=0;
+function sleep(ms){
+    return new Promise(resolve=>setTimeout(resolve,ms));
+}
+async function searchNominatim(area){
+    const task=geocodeQueue.then(async()=>{
+        const waitTime=Math.max(0,1100-(Date.now()-lastGeocodeRequestAt));
+        if(waitTime>0){
+            await sleep(waitTime);
+        }
+        lastGeocodeRequestAt=Date.now();
+        const params=new URLSearchParams({
+            "q":area,
+            "format":"jsonv2",
+            "limit":"1",
+            "accept-language":"zh-TW"
+        });
+        const url="https://nominatim.openstreetmap.org/search?"+params.toString();
+        const response=await fetch(url,{
+            headers:{
+                "User-Agent":"GeoTalk/1.0 (contact: kecianchuang@gmail.com)",
+                "Accept":"application/json"
+            }
+        });
+        if (!response.ok) {
+            throw new Error(
+                `Nominatim request failed: HTTP ${response.status}`
+            );
+        }
+        const results=await response.json();
+        if(!Array.isArray(results)||results.length===0){
+            return null;
+        }
+        return results[0];
+    });
+    geocodeQueue=task.catch(()=>{});
+    return task;
+}
+async function getCoordinatesForArea(area){
+    if(typeof area!=="string"||!area.trim()){
+        return null;
+    }
+    const queryText=area.trim().replace(/\s+/g," ");
+    const areaKey=queryText.toLocaleLowerCase("zh-TW");
+    const cached=await pool.query(
+        `SELECT display_name, lat, lng
+         FROM geocode_cache
+         WHERE area_key = $1`,
+        [areaKey]
+    );
+    if(cached.rows.length>0){
+        console.log("Geocode cache hit:",queryText);
+        return cached.rows[0];
+    }
+    const place=await searchNominatim(queryText);
+    if(!place){
+        return null;
+    }
+    const lat=Number(place.lat);
+    const lng=Number(place.lon);
+    if(!Number.isFinite(lat)||!Number.isFinite(lng)||lat<-90||lat>90||lng<-180||lng>180){
+        throw new Error("Invalid coordinates from Nominatim");
+    }
+    const saved=await pool.query(
+        `INSERT INTO geocode_cache (
+            area_key,
+            query_text,
+            display_name,
+            lat,
+            lng
+        )
+        VALUES ($1, $2, $3, $4, $5)
+        ON CONFLICT (area_key)
+        DO UPDATE SET
+            query_text = EXCLUDED.query_text,
+            display_name = EXCLUDED.display_name,
+            lat = EXCLUDED.lat,
+            lng = EXCLUDED.lng
+        RETURNING display_name, lat, lng`,
+        [
+            areaKey,
+            queryText,
+            place.display_name,
+            lat,
+            lng
+        ]
+    );
+    console.log("Geocode cache saved:", queryText);
+    return saved.rows[0];
+}
 app.get("/api",(_req, res)=>{
     res.json({
         "message":"bn -r"
@@ -249,6 +340,128 @@ app.get("/api/me",async(req,res)=>{
         res.status(500).json({
             "success":false,
             "message":"sv -err"
+        });
+    }
+});
+app.post("/api/posts",async(req,res)=>{
+    try{
+        const userId=req.session?.userId??req.session?.user?.id;
+        if(!userId){
+            return res.status(401).json({
+                "error":"login -err"
+            });
+        }
+        const{title,body,lat,lng,tag,type}=req.body;
+        if(typeof title!=="string"||!title.trim()||title.trim().length>80){
+            return res.status(400).json({
+                "error":"tit -long"
+            });
+        }
+        if(typeof body!=="string"||!body.trim()||body.trim().length>2000){
+            return res.status(400).json({
+                "error":"content -long"
+            });
+        }
+        let finalLat;
+        let finalLng;
+        let locationName=null;
+        if (type==="current"){
+            if(lat===undefined||lng===undefined||lat===null||lng===null){
+                return res.status(400).json({
+                    "error":"loc -nf"
+                });
+            }
+            finalLat=Number(lat);
+            finalLng=Number(lng);
+            if(!Number.isFinite(finalLat)||!Number.isFinite(finalLng)||finalLat<-90||finalLat>90||finalLng<-180||finalLng>180){
+                return res.status(400).json({
+                    "error":"lat/lng -err"
+                });
+            }
+        }
+        else if(type==="primary_area"){
+            const userResult=await pool.query(
+                `SELECT region
+                 FROM users
+                 WHERE id = $1`,
+                [userId]
+            );
+            if(userResult.rows.length===0){
+                return res.status(404).json({
+                    "error":"ur -nf"
+                });
+            }
+            const user=userResult.rows[0];
+            if(typeof user.region!=="string"||!user.region.trim()){
+                return res.status(400).json({
+                    "error":"loc -ns"
+                });
+            }
+            const place=await getCoordinatesForArea(
+                user.region.trim()
+            );
+            if(!place){
+                return res.status(400).json({
+                    "error":"loc -nf"
+                });
+            }
+            finalLat=Number(place.lat);
+            finalLng=Number(place.lng);
+            locationName=user.region.trim();
+            if(!Number.isFinite(finalLat)||!Number.isFinite(finalLng)||finalLat<-90||finalLat>90||finalLng<-180||finalLng>180){
+                return res.status(500).json({
+                    "error":"loc -err"
+                });
+            
+            }
+            else{
+                return res.status(400).json({
+                    "error":"loc -err"
+                });
+            }
+        }
+        const result=await pool.query(
+            `INSERT INTO posts (
+                user_id,
+                title,
+                body,
+                lat,
+                lng,
+                tags,
+                location_type,
+                location_name
+            )
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+            RETURNING
+                id,
+                title,
+                body,
+                lat,
+                lng,
+                tags,
+                location_type,
+                location_name,
+                time`,
+            [
+                userId,
+                title.trim(),
+                body.trim(),
+                finalLat,
+                finalLng,
+                tag,
+                type,
+                locationName
+            ]
+        );
+        return res.status(201).json({
+            "message":"post -suc",
+            "post":result.rows[0]
+        });
+    }
+    catch(error){
+        console.error("Create post failed:",error);
+        return res.status(500).json({
+            "error":"post -err"
         });
     }
 });

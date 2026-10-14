@@ -28,7 +28,7 @@ span,input{
     width: 90vw;
     height: 90vh;
     background-color: gray;
-    border-radius: 100px;
+    border-radius: 25px;
 }
 #register_text{
     top: 10%;
@@ -118,7 +118,7 @@ span,input{
     cursor: pointer !important;
     transition: 100ms;
 }
-#error{
+#error_board{
     position: absolute;
     left: 50%;
     bottom: 0px;
@@ -128,7 +128,7 @@ span,input{
     background: red;
     opacity: 0;
 }
-#error_text{
+#error_msg{
     top: 0px;
     font-size: xx-large;
 }
