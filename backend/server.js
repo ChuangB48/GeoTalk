@@ -7,7 +7,7 @@ const pgSession=require("connect-pg-simple")(session);
 require("dotenv").config();
 const app=express();
 const PORT=process.env.PORT||3000;
-const API_BASE = "https://geotalk.onrender.com/";
+const API_BASE="https://geotalk.onrender.com/";
 app.use(express.json());
 app.use(
     express.static(
