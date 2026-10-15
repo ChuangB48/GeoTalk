@@ -99,15 +99,37 @@ body{
     overflow: auto;
     word-wrap: break-word;
 }
-#post{
+#post_manage{
     position: absolute;
-    left: 50%;
+    left: 20%;
     bottom: -1%;
-    transform: translateX(-50%);
     width: 20%;
     height: 5%;
     border: 1px black solid;
     background-color: transparent;
+    font-weight: bolder;
+    cursor: pointer;
+}
+#post_manage:hover{
+    background-color: rgba(128,128,128,0.5);
+}
+#post_manage_text{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    cursor: pointer;
+    user-select: none;
+}
+#post{
+    position: absolute;
+    left: 40%;
+    bottom: -1%;
+    width: 20%;
+    height: 5%;
+    border: 1px black solid;
+    background-color: transparent;
+    font-weight: bolder;
     cursor: pointer;
 }
 #post:hover{

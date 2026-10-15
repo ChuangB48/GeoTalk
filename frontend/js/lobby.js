@@ -158,6 +158,9 @@ function escapeHTML(text){
     div.textContent=text;
     return div.innerHTML;
 }
+document.getElementById("post_manage").addEventListener("click",()=>{
+    location.href="post_manage.html";
+});
 document.getElementById("post").addEventListener("click",()=>{
     location.href="post.html";
 });

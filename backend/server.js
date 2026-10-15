@@ -347,11 +347,7 @@ app.get("/api/me",async(req,res)=>{
         });
     }
 });
-// ==================================================
-// GeoTalk：取得地圖上的貼文
-// GET /api/posts
-// ==================================================
-app.get("/api/posts",async(req,res)=>{
+app.get("/api/posts",async(_req,res)=>{
     try{
         const result=await pool.query(
             `SELECT
@@ -373,7 +369,6 @@ app.get("/api/posts",async(req,res)=>{
              ORDER BY p.id DESC
              LIMIT 200`
         );
-        // 將資料回傳給前端
         res.status(200).json({
             "posts":result.rows
         });
@@ -502,6 +497,97 @@ app.post("/api/posts",async(req,res)=>{
         console.error("Create post failed:",error);
         return res.status(500).json({
             "error":"post -err"
+        });
+    }
+});
+app.get("/api/my-posts",async(req,res)=>{
+    try{
+        const userId=req.session?.userId;
+        if(!userId){
+            return res.status(401).json({
+                "success":false,
+                "error":"log -n"
+            });
+        }
+        const result=await pool.query(
+            `
+                SELECT
+                    id,
+                    user_id,
+                    title,
+                    body,
+                    tags,
+                    lat,
+                    lng,
+                    location_type,
+                    location_name,
+                    time
+                FROM posts
+                WHERE user_id = $1
+                ORDER BY id DESC
+                LIMIT 200
+            `,
+            [userId]
+        );
+        return res.status(200).json({
+            "success":true,
+            "posts":result.rows
+        });
+    }
+    catch(error){
+        return res.status(500).json({
+            "success":false,
+            "error":"fmp -err"
+        });
+    }
+});
+app.delete("/api/posts/:id",async(req,res)=>{
+    try{
+        // 1. 確認使用者已登入
+        const userId=req.session?.userId;
+        if(!userId){
+            return res.status(401).json({
+                "success":false,
+                "error":"login_required"
+            });
+        }
+        // 2. 檢查貼文 ID 格式
+        const postId=req.params.id;
+        if(!/^[1-9]\d*$/.test(postId)){
+            return res.status(400).json({
+                "success":false,
+                "error":"invalid_post_id"
+            });
+        }
+        // 3. 只刪除屬於目前登入者的貼文
+        const result=await pool.query(
+            `
+            DELETE FROM posts
+            WHERE id = $1
+              AND user_id = $2
+            RETURNING id
+            `,
+            [postId, userId]
+        );
+        // 4. 找不到貼文，或貼文不屬於這個使用者
+        if(result.rowCount===0){
+            return res.status(404).json({
+                "success":false,
+                "error":"post_not_found"
+            });
+        }
+        // 5. 刪除成功
+        return res.status(200).json({
+            "success":true,
+            "message":"貼文已刪除",
+            "deletedId":result.rows[0].id
+        });
+    }
+    catch(error){
+        console.error("Delete post failed:",error);
+        return res.status(500).json({
+            "success":false,
+            "error":"delete_post_failed"
         });
     }
 });
