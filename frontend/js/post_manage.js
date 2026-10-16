@@ -37,7 +37,7 @@ async function del(id){
             return;
         }
         if(!response.ok||!data.success){
-            // 刪除失敗
+            error(102,"");
         }
         await loadMyPosts();
     }
@@ -60,6 +60,6 @@ function error(err,msg){
     window.setTimeout(()=>{
         document.getElementById("error_board").style.opacity="0";
         document.getElementById("error_board").style.zIndex="-1";
-    },1000);
+    },10000);
 }
 loadMyPosts();

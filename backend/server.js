@@ -161,7 +161,7 @@ app.post("/api/login",async(req,res)=>{
         if(!username||!password){
             return res.status(400).json({
                 "success":false,
-                "message":"un pw -req"
+                "message":"201"
             });
         }
         const clean_username=username.trim();
@@ -182,7 +182,7 @@ app.post("/api/login",async(req,res)=>{
         if(result.rows.length===0){
             return res.status(401).json({
                 "success":false,
-                "message":"un pw -inv"
+                "message":"202"
             });
         }
         const user=result.rows[0];
@@ -193,13 +193,12 @@ app.post("/api/login",async(req,res)=>{
         if(!password_match){
             return res.status(401).json({
                 "success":false,
-                "message":"un pw -inv"
+                "message":"203"
             });
         }
         req.session.userId=user.id;
         res.json({
             "success":true,
-            "message":"log -suc",
             "user":{
                 "id":user.id,
                 "username":user.username,
@@ -211,7 +210,7 @@ app.post("/api/login",async(req,res)=>{
         console.error("Login error:",error);
         res.status(500).json({
             "success":false,
-            "message":"sv -err"
+            "message":"204"
         });
     }
 });
@@ -221,26 +220,26 @@ app.post("/api/register",async(req,res)=>{
         if(!username||!password){
             return res.status(400).json({
                 "success":false,
-                "message":"un pw -req"
+                "message":"201"
             });
         }
         const clean_username=username.trim();
         if(clean_username.length<3){
             return res.status(400).json({
                 "success":false,
-                "message":"un -short"
+                "message":"202"
             });
         }
         else if(clean_username.length>50){
             return res.status(400).json({
                 "success":false,
-                "message":"un -long"
+                "message":"203"
             });
         }
         if(password.length<6){
             return res.status(400).json({
                 "success":false,
-                "message":"pw -short"
+                "message":"204"
             });
         }
         const existing_user=await pool.query(
@@ -259,7 +258,7 @@ app.post("/api/register",async(req,res)=>{
             if(user.username===clean_username){
                 return res.status(409).json({
                     "success":false,
-                    "message":"un -taken"
+                    "message":"205"
                 });
             }
         }
@@ -289,7 +288,6 @@ app.post("/api/register",async(req,res)=>{
         const new_user=result.rows[0];
         res.status(201).json({
             "success":true,
-            "message":"acc -suc",
             "user":new_user
         });
     }
@@ -298,12 +296,12 @@ app.post("/api/register",async(req,res)=>{
         if (error.code==="23505") {
             return res.status(409).json({
                 "success":false,
-                "message":"un -taken"
+                "message":"205"
             });
         }
         res.status(500).json({
             "success":false,
-            "message":"sv -err"
+            "message":"206"
         });
     }
 });
@@ -320,7 +318,8 @@ app.get("/api/me",async(req,res)=>{
                 SELECT
                     id,
                     username,
-                    email
+                    email,
+                    avatar
                 FROM users
                 WHERE id = $1
                 LIMIT 1
@@ -588,6 +587,50 @@ app.delete("/api/posts/:id",async(req,res)=>{
         return res.status(500).json({
             "success":false,
             "error":"delete_post_failed"
+        });
+    }
+});
+app.get("/api/profile",async(req,res)=>{
+    try{
+        const userId=req.session?.userId;
+        if(!userId){
+            return res.status(401).json({
+                "success":false,
+                "error":"201"
+            });
+        }
+        const result=await pool.query(
+            `
+            SELECT
+                id,
+                username,
+                email,
+                region,
+                gender,
+                avatar,
+                birth,
+                bio,
+                url
+            FROM users
+            WHERE id = $1
+            `,
+            [userId]
+        );
+        if(result.rowCount===0){
+            return res.status(404).json({
+                "success":false,
+                "error":"202"
+            });
+        }
+        return res.json({
+            "success":true,
+            "profile":result.rows[0]
+        });
+    }
+    catch(error){
+        return res.status(500).json({
+            "success":false,
+            "error":"203"
         });
     }
 });
