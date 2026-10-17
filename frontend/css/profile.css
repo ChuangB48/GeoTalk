@@ -26,7 +26,7 @@ body{
     left: 50%;
     top: 50%;
     transform: translate(-50%,-50%);
-    color: white;
+    color: black;
     font-size: 3em;
     cursor: pointer;
     user-select: none;
@@ -78,6 +78,7 @@ body{
     width: 30%;
     height: 40%;
     border: 1px white solid;
+    border-radius: 10px;
     overflow: auto;
 }
 #bio_text{
@@ -102,7 +103,7 @@ body{
 #url{
     position: absolute;
     left: 60%;
-    top: 40%;
+    top: 45%;
     max-width: 30%;
     font-size: 1em;
     color: blue;

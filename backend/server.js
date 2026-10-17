@@ -542,7 +542,6 @@ app.get("/api/my-posts",async(req,res)=>{
 });
 app.delete("/api/posts/:id",async(req,res)=>{
     try{
-        // 1. 確認使用者已登入
         const userId=req.session?.userId;
         if(!userId){
             return res.status(401).json({
@@ -550,7 +549,6 @@ app.delete("/api/posts/:id",async(req,res)=>{
                 "error":"login_required"
             });
         }
-        // 2. 檢查貼文 ID 格式
         const postId=req.params.id;
         if(!/^[1-9]\d*$/.test(postId)){
             return res.status(400).json({
@@ -558,7 +556,6 @@ app.delete("/api/posts/:id",async(req,res)=>{
                 "error":"invalid_post_id"
             });
         }
-        // 3. 只刪除屬於目前登入者的貼文
         const result=await pool.query(
             `
             DELETE FROM posts
@@ -568,14 +565,12 @@ app.delete("/api/posts/:id",async(req,res)=>{
             `,
             [postId, userId]
         );
-        // 4. 找不到貼文，或貼文不屬於這個使用者
         if(result.rowCount===0){
             return res.status(404).json({
                 "success":false,
                 "error":"post_not_found"
             });
         }
-        // 5. 刪除成功
         return res.status(200).json({
             "success":true,
             "message":"貼文已刪除",
@@ -631,6 +626,119 @@ app.get("/api/profile",async(req,res)=>{
         return res.status(500).json({
             "success":false,
             "error":"203"
+        });
+    }
+});
+app.put("/api/profile",async(req,res)=>{
+    try{
+        const userId=req.session?.userId;
+        if(!userId){
+            return res.status(401).json({
+                "success":false,
+                "error":"201"
+            });
+        }
+        const {username,email,region,gender,birth,bio,url}=req.body||{};
+        if(typeof username!=="string"||username.trim().length>30){
+            return res.status(400).json({
+                "success":false,
+                "message":"202"
+            });
+        }
+        if(typeof region!=="string"||region.trim().length>100){
+            return res.status(400).json({
+                "success":false,
+                "message":"203"
+            });
+        }
+
+        const cleanEmail=typeof email==="string"?email.trim():"";
+        if(cleanEmail.length>254||(cleanEmail&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail))){
+            return res.status(400).json({
+                "success":false,
+                "message":"204"
+            });
+        }
+        const cleanGender=typeof gender==="string"?gender.trim():"";
+        const cleanBio=typeof bio==="string"?bio.trim():"";
+        const clean_url=typeof url==="string"?url.trim():"";
+        const cleanBirth=typeof birth==="string"?birth.trim():"";
+        if(cleanGender.length>20){
+            return res.status(400).json({
+                "success":false,
+                "message":"205"
+            });
+        }
+        if(cleanBio.length>500){
+            return res.status(400).json({
+                "success":false,
+                "message":"206"
+            });
+        }
+        if(clean_url.length>1000){
+            return res.status(400).json({
+                "success":false,
+                "message":"207"
+            });
+        }
+        if(cleanBirth){
+            const date=new Date(`${cleanBirth}T00:00:00.000Z`);
+            if(!/^\d{4}-\d{2}-\d{2}$/.test(cleanBirth)||Number.isNaN(date.getTime())||date.toISOString().slice(0,10)!==cleanBirth||cleanBirth>new Date().toISOString().slice(0,10)){
+                return res.status(400).json({
+                    "success":false,
+                    "message":"208"
+                });
+            }
+        }
+        const result=await pool.query(
+            `
+            UPDATE users
+            SET
+                username = $1,
+                email = $2,
+                region = $3,
+                gender = $4,
+                birth = $5::date,
+                bio = $6,
+                url = $7
+            WHERE id = $8
+            RETURNING
+                id, username, email, region,
+                gender, birth, bio, url
+            `,
+            [
+                username.trim(),
+                cleanEmail?cleanEmail.toLowerCase():null,
+                region.trim(),
+                cleanGender||null,
+                cleanBirth||null,
+                cleanBio||null,
+                clean_url,
+                userId
+            ]
+        );
+        if(result.rowCount===0){
+            return res.status(404).json({
+                "success":false,
+                "message":"209"
+            });
+        }
+        return res.json({
+            "success":true,
+            "profile":result.rows[0]
+        });
+
+    }
+    catch(error){
+        if (error.code==="23505") {
+            return res.status(409).json({
+                "success":false,
+                "message":"210"
+            });
+        }
+        return res.status(500).json({
+            "success":false,
+            "message":"211"
         });
     }
 });

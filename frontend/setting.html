@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>
+            個人檔案 - GeoTalk
+        </title>
+        <link rel="stylesheet" href="css/setting.css">
+    </head>
+    <body>
+        <div id="header">
+            <div id="logo">
+                <span id="logo_text">
+                    GeoTalk
+                </span>
+            </div>
+        </div>
+        <div id="board">
+            <div id="banner"></div>
+            <div id="avatar"></div>
+            <div id="bio">
+                <textarea id="bio_text"></textarea>
+            </div>
+            <input id="name">
+            <input id="url">
+            <span id="sep">
+                ____________________________________________________________________________________________________
+            </span>
+            <div id="email">
+                <span id="email_title">
+                    EMAIL:&ensp;
+                </span>
+                <input id="email_text">
+            </div>
+            <div id="region">
+                <span id="region_title">
+                    主要活動地區:&ensp;
+                </span>
+                <select id="region_text">
+                    <option value="taiwan">
+                        台灣
+                    </option>
+                </select>
+            </div>
+            <div id="birth">
+                <span id="birth_title">
+                    生日:&ensp;
+                </span>
+                <input type="date" id="birth_text">
+            </div>
+            <div id="gender">
+                <span id="gender_title">
+                    性別:&ensp;
+                </span>
+                <select id="gender_text">
+                    <option disabled selected>
+                        請選擇性別
+                    </option>
+                    <option value="male">
+                        男生
+                    </option>
+                    <option value="female">
+                        女生
+                    </option>
+                </select>
+            </div>
+            <div id="enter">
+                <span id="enter_span">
+                    修改
+                </span>
+            </div>
+        </div>
+        <div id="error_board">
+            <span id="error_text">
+                ERROR
+            </span>
+            <span id="line">
+                ____________________________________________________________________________________________________
+            </span>
+            <span id="error_msg"></span>
+        </div>
+        <script src="js/setting.js"></script>
+    </body>
+</html>

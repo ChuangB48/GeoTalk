@@ -34,8 +34,8 @@ async function loadProfile(){
         document.getElementById("birth_text").innerText=display(data.profile.birth);
         document.getElementById("gender_text").innerText=display(data.profile.gender);
     }
-    catch(error){
-        console.error("載入個人檔案失敗：",error);
+    catch(err){
+        error(103,err);
     }
 }
 function error(err,msg){
@@ -62,6 +62,9 @@ function error(err,msg){
         else if(msg==203){
             document.getElementById("error_msg").innerText="伺服器錯誤";
         }
+    }
+    else if(err==103){
+        document.getElementById("error_msg").innerText="伺服器錯誤: "+msg;
     }
     window.setTimeout(()=>{
         if(document.getElementById("error_board").style.opacity>"0"){
