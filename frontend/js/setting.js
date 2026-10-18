@@ -13,7 +13,7 @@ async function loadProfile(){
         }
         const data=await response.json();
         if(!response.ok||!data.success||!data.profile){
-            error(102,data.error);
+            error(102,data.message);
             return;
         }
         document.getElementById("avatar_src").src=data.profile.avatar;

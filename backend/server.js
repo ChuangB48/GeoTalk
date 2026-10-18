@@ -500,7 +500,7 @@ app.get("/api/my-posts",async(req,res)=>{
         if(!userId){
             return res.status(401).json({
                 "success":false,
-                "error":"log -n"
+                "error":"201"
             });
         }
         const result=await pool.query(
@@ -531,7 +531,7 @@ app.get("/api/my-posts",async(req,res)=>{
     catch(error){
         return res.status(500).json({
             "success":false,
-            "error":"fmp -err"
+            "error":"202"
         });
     }
 });
@@ -541,14 +541,14 @@ app.delete("/api/posts/:id",async(req,res)=>{
         if(!userId){
             return res.status(401).json({
                 "success":false,
-                "error":"login_required"
+                "error":"201"
             });
         }
         const postId=req.params.id;
         if(!/^[1-9]\d*$/.test(postId)){
             return res.status(400).json({
                 "success":false,
-                "error":"invalid_post_id"
+                "error":"202"
             });
         }
         const result=await pool.query(
@@ -563,7 +563,7 @@ app.delete("/api/posts/:id",async(req,res)=>{
         if(result.rowCount===0){
             return res.status(404).json({
                 "success":false,
-                "error":"post_not_found"
+                "error":"203"
             });
         }
         return res.status(200).json({
@@ -576,7 +576,7 @@ app.delete("/api/posts/:id",async(req,res)=>{
         console.error("Delete post failed:",error);
         return res.status(500).json({
             "success":false,
-            "error":"delete_post_failed"
+            "error":"204"
         });
     }
 });
@@ -586,7 +586,7 @@ app.get("/api/profile",async(req,res)=>{
         if(!userId){
             return res.status(401).json({
                 "success":false,
-                "error":"201"
+                "message":"201"
             });
         }
         const result=await pool.query(
@@ -609,7 +609,7 @@ app.get("/api/profile",async(req,res)=>{
         if(result.rowCount===0){
             return res.status(404).json({
                 "success":false,
-                "error":"202"
+                "message":"202"
             });
         }
         return res.json({
@@ -620,7 +620,7 @@ app.get("/api/profile",async(req,res)=>{
     catch(error){
         return res.status(500).json({
             "success":false,
-            "error":"203"
+            "message":"203"
         });
     }
 });
@@ -630,7 +630,7 @@ app.put("/api/profile",async(req,res)=>{
         if(!userId){
             return res.status(401).json({
                 "success":false,
-                "error":"201"
+                "message":"201"
             });
         }
         const {username,email,region,gender,avatar,birth,bio,url}=req.body||{};

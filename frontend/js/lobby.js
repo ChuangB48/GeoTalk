@@ -89,11 +89,11 @@ async function initMap(){
         const response=await fetch("/api/posts",{
             credentials:"same-origin"
         });
+        const data=await response.json();
         if(!response.ok){
-            error(101,response.message);
+            error(101,data.message);
             return;
         }
-        const data=await response.json();
         const posts=data.posts;
         if(!Array.isArray(posts)){
             error(102,"");
