@@ -7,7 +7,7 @@ const pgSession=require("connect-pg-simple")(session);
 require("dotenv").config();
 const app=express();
 const PORT=process.env.PORT||3000;
-app.use(express.json());
+app.use(express.json({"limit":"2mb"}));
 app.use(
     express.static(
         path.join(__dirname,"../frontend")
@@ -638,7 +638,7 @@ app.put("/api/profile",async(req,res)=>{
                 "error":"201"
             });
         }
-        const {username,email,region,gender,birth,bio,url}=req.body||{};
+        const {username,email,region,gender,avatar,birth,bio,url}=req.body||{};
         if(typeof username!=="string"||username.trim().length>30){
             return res.status(400).json({
                 "success":false,
@@ -690,6 +690,27 @@ app.put("/api/profile",async(req,res)=>{
                 });
             }
         }
+        if(avatar){
+            if(typeof avatar!=="string"){
+                return res.status(400).json({
+                    "success":false,
+                    "message":"209"
+                });
+            }
+            if(avatar.length>1000000){
+                return res.status(400).json({
+                    "success":false,
+                    "message":"，210"
+                });
+            }
+            const valid=/^data:image\/jpeg;base64,[A-Za-z0-9+/]+={0,2}$/.test(avatar);
+            if(!valid){
+                return res.status(400).json({
+                    "success":false,
+                    "message":"211"
+                });
+            }
+        }
         const result=await pool.query(
             `
             UPDATE users
@@ -698,19 +719,25 @@ app.put("/api/profile",async(req,res)=>{
                 email = $2,
                 region = $3,
                 gender = $4,
-                birth = $5::date,
-                bio = $6,
-                url = $7
-            WHERE id = $8
+                avatar = CASE
+                    WHEN $5::boolean THEN $6::varchar
+                    ELSE avatar
+                END,
+                birth = $7::date,
+                bio = $8,
+                url = $9
+            WHERE id = $10
             RETURNING
                 id, username, email, region,
-                gender, birth, bio, url
+                gender, avatar, birth, bio, url
             `,
             [
                 username.trim(),
                 cleanEmail?cleanEmail.toLowerCase():null,
                 region.trim(),
                 cleanGender||null,
+                (avatar!==""),
+                avatar,
                 cleanBirth||null,
                 cleanBio||null,
                 clean_url,
@@ -720,7 +747,7 @@ app.put("/api/profile",async(req,res)=>{
         if(result.rowCount===0){
             return res.status(404).json({
                 "success":false,
-                "message":"209"
+                "message":"212"
             });
         }
         return res.json({
@@ -733,12 +760,12 @@ app.put("/api/profile",async(req,res)=>{
         if (error.code==="23505") {
             return res.status(409).json({
                 "success":false,
-                "message":"210"
+                "message":"213"
             });
         }
         return res.status(500).json({
             "success":false,
-            "message":"211"
+            "message":"214"
         });
     }
 });

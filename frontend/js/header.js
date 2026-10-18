@@ -3,7 +3,7 @@ async function loadCurrentUser(){
         const response=await fetch("/api/me");
         const data=await response.json();
         if(response.ok){
-            document.getElementById("avatar").innerHTML="<img src='"+data.user.username+"' id='avatar_pic'>";
+            document.getElementById("avatar").innerHTML="<img src='"+data.user.avatar+"' id='avatar_pic' onerror=\"this.onerror=null; this.src='images/default.png';\">";
             document.getElementById("username_text").textContent=data.user.username;
         }
         else{

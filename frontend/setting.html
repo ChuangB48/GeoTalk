@@ -17,7 +17,10 @@
         </div>
         <div id="board">
             <div id="banner"></div>
-            <div id="avatar"></div>
+            <div id="avatar">
+                <img id='avatar_src' onerror="this.onerror=null; this.src='images/default.png';">
+                <input type="file" accept="image/*" id="avatar_input">
+            </div>
             <div id="bio">
                 <textarea id="bio_text"></textarea>
             </div>

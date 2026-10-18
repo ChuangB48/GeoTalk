@@ -22,7 +22,7 @@ async function loadProfile(){
             error(102,data.error);
             return;
         }
-        document.getElementById("avatar").innerHTML="<img id='avatar_src' src="+data.profile.avatar+">"
+        document.getElementById("avatar").innerHTML="<img id='avatar_src' src='"+data.profile.avatar+"' onerror=\"this.onerror=null; this.src='images/default.png';\">"
         document.getElementById("name").innerText=data.profile.username;
         if(data.profile.url!==null&&data.profile.url!==undefined&&data.profile.url.trim()!==""){
             document.getElementById("url").href=data.profile.url;
@@ -38,6 +38,9 @@ async function loadProfile(){
         error(103,err);
     }
 }
+document.getElementById("edit").addEventListener("click",()=>{
+    location.href="setting.html";
+})
 function error(err,msg){
     document.getElementById("error_board").style.zIndex="1";
     document.getElementById("error_board").style.opacity="0";
@@ -51,10 +54,12 @@ function error(err,msg){
     },20)
     if(err==101){
         document.getElementById("error_msg").innerText="尚未登入";
+        location.href="login.html";
     }
     else if(err==102){
         if(msg==201){
             document.getElementById("error_msg").innerText="尚未登入";
+            location.href="login.html";
         }
         else if(msg==202){
             document.getElementById("error_msg").innerText="未找到使用者";
