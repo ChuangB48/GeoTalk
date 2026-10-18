@@ -35,20 +35,22 @@ async function prepare_avatar(file){
     const allowedTypes=["image/jpeg","image/png","image/webp"];
     if(!allowedTypes.includes(file.type)){
         error(104,"");
+        return;
     }
     if(file.size>10*1024*1024){
         error(105,"");
+        return;
     }
     const imageSource=await new Promise((resolve,reject)=>{
         const reader = new FileReader();
         reader.onload=()=>resolve(reader.result);
-        error(106,"");
+        reader.onerror=()=>reject(error(106,""));
         reader.readAsDataURL(file);
     });
     const image=await new Promise((resolve,reject)=>{
         const img=new Image();
         img.onload=()=>resolve(img);
-        error(106,"");
+        img.onerror=()=>reject(error(106,""));
         img.src=imageSource;
     });
     const maxSize=512;
@@ -59,11 +61,13 @@ async function prepare_avatar(file){
     const context=canvas.getContext("2d");
     if(!context){
         error(107,"");
+        return;
     }
     context.drawImage(image,0,0,canvas.width,canvas.height);
     const result=canvas.toDataURL("image/jpeg",0.82);
     if(result.length>1000000){
         error(108,"");
+        return;
     }
     return result;
 }

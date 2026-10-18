@@ -12,6 +12,7 @@ async function loadMyPosts(){
         const data=await response.json();
         if (!response.ok||!data.success){
             error(102,"");
+            return;
         }
         const posts=data.posts||[];
         if(posts.length===0){
@@ -38,6 +39,7 @@ async function del(id){
         }
         if(!response.ok||!data.success){
             error(102,"");
+            return;
         }
         await loadMyPosts();
     }

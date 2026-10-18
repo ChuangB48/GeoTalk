@@ -90,22 +90,20 @@ async function initMap(){
             credentials:"same-origin"
         });
         if(!response.ok){
-            throw new Error(
-                `Failed to fetch posts: HTTP ${response.status}`
-            );
+            error(101,response.message);
+            return;
         }
         const data=await response.json();
         const posts=data.posts;
         if(!Array.isArray(posts)){
-            throw new Error(
-                "API response does not contain a posts array."
-            );
+            error(102,"");
+            return;
         }
         posts.forEach(post=>{
             const latitude=Number(post.lat);
             const longitude=Number(post.lng);
             if(!Number.isFinite(latitude)||!Number.isFinite(longitude)||latitude<-90||latitude>90||longitude<-180||longitude>180){
-                console.warn("Skipped post with invalid coordinates:",post.id);
+                error(103,post.id);
                 return;
             }
             const mapPost={
@@ -120,8 +118,8 @@ async function initMap(){
             postOverlays.push(overlay);
         });
     }
-    catch(error){
-        console.error("Failed to load map posts:",error);
+    catch(err){
+        error(104,err);
     }
 }
 function shortenText(text,maxLength){
@@ -164,5 +162,46 @@ document.getElementById("post_manage").addEventListener("click",()=>{
 document.getElementById("post").addEventListener("click",()=>{
     location.href="post.html";
 });
+function error(err,msg){
+    document.getElementById("error_board").style.zIndex="1";
+    document.getElementById("error_board").style.opacity="0";
+    let a=0;
+    let time=window.setInterval(()=>{
+        document.getElementById("error_board").style.opacity=a.toString();
+        a+=0.1
+        if(a>=0.9){
+            window.clearInterval(time);
+        }
+    },20)
+    if(err==101){
+        if(msg==201){
+            document.getElementById("error_msg").innerText="貼文載入失敗";
+        }
+    }
+    else if(err==102){
+        document.getElementById("error_msg").innerText="後端未回傳任何貼文";
+    }
+    else if(err==103){
+        document.getElementById("error_msg").innerText="可能含有無效的座標: "+msg;
+    }
+    else if(err==104){
+        document.getElementById("error_msg").innerText="地圖載入失敗: "+msg;
+    }
+    window.setTimeout(()=>{
+        if(document.getElementById("error_board").style.opacity>"0"){
+            document.getElementById("error_board").style.opacity="0.9";
+            a=0.9;
+            let time=window.setInterval(()=>{
+                document.getElementById("error_board").style.opacity=a.toString();
+                a-=0.1
+                if(a<=0){
+                    document.getElementById("error_board").style.zIndex="-1";
+                    document.getElementById("error_board").style.opacity="0";
+                    window.clearInterval(time);
+                }
+            },20)
+        }
+    },5000);
+}
 window.initMap=initMap;
 loadCurrentUser();

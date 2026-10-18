@@ -382,18 +382,18 @@ app.post("/api/posts",async(req,res)=>{
         const userId=req.session?.userId??req.session?.user?.id;
         if(!userId){
             return res.status(401).json({
-                "error":"login -err"
+                "error":"201"
             });
         }
         const{title,body,lat,lng,tag,type}=req.body;
         if(typeof title!=="string"||!title.trim()||title.trim().length>80){
             return res.status(400).json({
-                "error":"tit -long"
+                "error":"202"
             });
         }
         if(typeof body!=="string"||!body.trim()||body.trim().length>2000){
             return res.status(400).json({
-                "error":"content -long"
+                "error":"203"
             });
         }
         let finalLat;
@@ -402,14 +402,14 @@ app.post("/api/posts",async(req,res)=>{
         if (type==="current"){
             if(lat===undefined||lng===undefined||lat===null||lng===null){
                 return res.status(400).json({
-                    "error":"loc -nf"
+                    "error":"204"
                 });
             }
             finalLat=Number(lat);
             finalLng=Number(lng);
             if(!Number.isFinite(finalLat)||!Number.isFinite(finalLng)||finalLat<-90||finalLat>90||finalLng<-180||finalLng>180){
                 return res.status(400).json({
-                    "error":"lat/lng -err"
+                    "error":"205"
                 });
             }
         }
@@ -422,13 +422,13 @@ app.post("/api/posts",async(req,res)=>{
             );
             if(userResult.rows.length===0){
                 return res.status(404).json({
-                    "error":"ur -nf"
+                    "error":"206"
                 });
             }
             const user=userResult.rows[0];
             if(typeof user.region!=="string"||!user.region.trim()){
                 return res.status(400).json({
-                    "error":"loc -ns"
+                    "error":"207"
                 });
             }
             const place=await getCoordinatesForArea(
@@ -436,7 +436,7 @@ app.post("/api/posts",async(req,res)=>{
             );
             if(!place){
                 return res.status(400).json({
-                    "error":"loc -nf"
+                    "error":"208"
                 });
             }
             finalLat=Number(place.lat);
@@ -444,7 +444,7 @@ app.post("/api/posts",async(req,res)=>{
             locationName=user.region.trim();
             if(!Number.isFinite(finalLat)||!Number.isFinite(finalLng)||finalLat<-90||finalLat>90||finalLng<-180||finalLng>180){
                 return res.status(500).json({
-                    "error":"loc -err"
+                    "error":"209"
                 });
             
             }
@@ -490,7 +490,7 @@ app.post("/api/posts",async(req,res)=>{
     catch(error){
         console.error("Create post failed:",error);
         return res.status(500).json({
-            "error":"post -err"
+            "error":"210"
         });
     }
 });

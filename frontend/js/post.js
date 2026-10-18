@@ -87,6 +87,33 @@ function error(err,msg){
     }
     else if(err==102){
         if(msg==201){
+            document.getElementById("error_msg").innerText="尚未登入";
+        }
+        else if(msg==202){
+            document.getElementById("error_msg").innerText="標題字數需在0~80字以內,或標題型態不合格";
+        }
+        else if(msg==203){
+            document.getElementById("error_msg").innerText="內文字數需在0~2000字以內,或內文型態不合格";
+        }
+        else if(msg==204){
+            document.getElementById("error_msg").innerText="未找到使用者座標";
+        }
+        else if(msg==205){
+            document.getElementById("error_msg").innerText="定位座標錯誤";
+        }
+        else if(msg==206){
+            document.getElementById("error_msg").innerText="未找到使用者";
+        }
+        else if(msg==207){
+            document.getElementById("error_msg").innerText="主要活動區域定位錯誤";
+        }
+        else if(msg==208){
+            document.getElementById("error_msg").innerText="主要活動區域未找到座標";
+        }
+        else if(msg==209){
+            document.getElementById("error_msg").innerText="座標錯誤";
+        }
+        else if(msg==210){
             document.getElementById("error_msg").innerText="發文失敗";
         }
     }
