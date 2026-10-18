@@ -309,8 +309,7 @@ app.get("/api/me",async(req,res)=>{
     try{
         if(!req.session.userId){
             return res.status(401).json({
-                "success":false,
-                "message":"login -n"
+                "success":false
             });
         }
         const result=await pool.query(
@@ -329,8 +328,7 @@ app.get("/api/me",async(req,res)=>{
         if(result.rows.length===0){
             req.session.destroy(()=>{});
             return res.status(401).json({
-                "success":false,
-                "message":"us -nf"
+                "success":false
             });
         }
         res.json({
@@ -341,8 +339,7 @@ app.get("/api/me",async(req,res)=>{
     catch(error){
         console.error("Get current user error:",error);
         res.status(500).json({
-            "success":false,
-            "message":"sv -err"
+            "success":false
         });
     }
 });
@@ -369,16 +366,14 @@ app.get("/api/posts",async(_req,res)=>{
              LIMIT 200`
         );
         res.status(200).json({
+            "success":true,
             "posts":result.rows
         });
     }
     catch(error){
-        console.error(
-            "Fetch posts failed:",
-            error
-        );
         res.status(500).json({
-            error: "Failed to fetch posts."
+            "success":false,
+            "message":"201"
         });
     }
 });
