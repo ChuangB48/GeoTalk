@@ -9,6 +9,7 @@ body{
     height: 100vh;
     overflow: hidden;
     z-index: -1;
+    user-select: none;
 }
 #light{
     position: absolute;
@@ -16,6 +17,7 @@ body{
     height: 0px;
     box-shadow: 0px 0px 10000px 30px gray;
     pointer-events: none;
+    user-select: none;
 }
 .star{
     position: absolute;
@@ -24,6 +26,7 @@ body{
     border-radius: 50%;
     background-color: aqua;
     opacity: 0;
+    user-select: none;
 }
 .line{
     position: absolute;
@@ -31,4 +34,5 @@ body{
     background-color: aqua;
     transform-origin: 0 50%;
     opacity: 0;
+    user-select: none;
 }
