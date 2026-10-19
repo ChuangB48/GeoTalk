@@ -1,0 +1,34 @@
+body{
+    background-color: black;
+}
+#sky{
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    z-index: -1;
+}
+#light{
+    position: absolute;
+    width: 0px;
+    height: 0px;
+    box-shadow: 0px 0px 10000px 30px gray;
+    pointer-events: none;
+}
+.star{
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background-color: aqua;
+    opacity: 0;
+}
+.line{
+    position: absolute;
+    height: 2px;
+    background-color: aqua;
+    transform-origin: 0 50%;
+    opacity: 0;
+}

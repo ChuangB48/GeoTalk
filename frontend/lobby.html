@@ -5,10 +5,14 @@
         <title>
             大廳 - GeoTalk
         </title>
+        <link rel="stylesheet" href="css/sky.css">
         <link rel="stylesheet" href="css/header.css">
         <link rel="stylesheet" href="css/lobby.css">
     </head>
     <body>
+        <div id="sky">
+            <div id="light"></div>
+        </div>
         <div id="header">
             <div id="logo">
                 <span id="logo_text">
@@ -56,6 +60,7 @@
             </span>
             <span id="error_msg"></span>
         </div>
+        <script src="js/sky.js"></script>
         <script src="js/header.js"></script>
         <script src="js/lobby.js"></script>
         <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBgHXud4qwezGSDeJAT20BdReZ3TRGK1hs&loading=async&callback=initMap"></script>
