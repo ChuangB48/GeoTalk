@@ -26,7 +26,7 @@ async function initMap(){
         }
         onAdd(){
             this.div=document.createElement("div");
-            this.div.className="post-card";
+            this.div.className="post_card";
             this.div.style.cursor="pointer";
             this.div.style.pointerEvents="auto";
             this.div.tabIndex=0;
@@ -35,17 +35,7 @@ async function initMap(){
                 "aria-label",
                 "查看完整貼文："+(this.post.title||"")
             );
-            this.div.innerHTML=`
-                <div class="post-card-title">
-                    ${escapeHTML(this.post.title||"")}
-                </div>
-                <div class="post-card-username">
-                    ${escapeHTML(this.post.username||"未知使用者")}
-                </div>
-                <div class="post-card-category">
-                    ${escapeHTML(this.post.category??this.post.tag??this.post.tags??"未分類")}
-                </div>
-            `;
+            this.div.innerHTML="<div class='title'>"+escapeHTML(this.post.title||'')+"</div><div class='username'>"+escapeHTML(this.post.username||'未知使用者')+"</div><div class='tag'>"+escapeHTML(this.post.category??this.post.tag??this.post.tags??'未分類')+"</div>";
             this.div.addEventListener("click",(event)=>{
                 event.stopPropagation();
                 showPostDetail(this.post);
@@ -204,3 +194,4 @@ function error(err,msg){
     },5000);
 }
 window.initMap=initMap;
+loadCurrentUser();
