@@ -30,7 +30,7 @@ body{
 }
 .line{
     position: absolute;
-    height: 2px;
+    height: 1px;
     background-color: aqua;
     transform-origin: 0 50%;
     opacity: 0;
