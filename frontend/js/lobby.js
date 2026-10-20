@@ -16,7 +16,7 @@ async function initMap(){
             fullscreenControl:false
         }
     );
-    class PostOverlay extends google.maps.OverlayView {
+    class PostOverlay extends google.maps.OverlayView{
         constructor(post,map){
             super();
             this.post=post;
@@ -33,7 +33,7 @@ async function initMap(){
             this.div.setAttribute("role","button");
             this.div.setAttribute(
                 "aria-label",
-                "查看完整貼文：" + (this.post.title||"")
+                "查看完整貼文："+(this.post.title||"")
             );
             this.div.innerHTML=`
                 <div class="post-card-title">
@@ -204,4 +204,3 @@ function error(err,msg){
     },5000);
 }
 window.initMap=initMap;
-loadCurrentUser();
