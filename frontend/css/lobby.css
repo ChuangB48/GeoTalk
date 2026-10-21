@@ -146,6 +146,29 @@ body{
     cursor: pointer;
     user-select: none;
 }
+#setting{
+    position: absolute;
+    left: 60%;
+    bottom: -1%;
+    width: 20%;
+    height: 5%;
+    border: 1px white solid;
+    background-color: transparent;
+    font-weight: bolder;
+    cursor: pointer;
+}
+#setting:hover{
+    background-color: rgba(255, 255, 255, 0.5);
+}
+#setting_text{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    color: white;
+    cursor: pointer;
+    user-select: none;
+}
 #error_board{
     position: absolute;
     right: 3%;

@@ -152,6 +152,9 @@ document.getElementById("post_manage").addEventListener("click",()=>{
 document.getElementById("post").addEventListener("click",()=>{
     location.href="post.html";
 });
+document.getElementById("setting").addEventListener("click",()=>{
+    location.href="profile.html";
+});
 function error(err,msg){
     document.getElementById("error_board").style.zIndex="1";
     document.getElementById("error_board").style.opacity="0";
