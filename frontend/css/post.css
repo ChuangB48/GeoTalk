@@ -88,6 +88,7 @@ input:hover,input:focus,textarea:hover,textarea:focus,select:hover,select:focus{
     border: 1px white solid;
     background-color: black;
     border-radius: 10px;
+    cursor: pointer;
 }
 #enter_text{
     position: absolute;
@@ -95,6 +96,8 @@ input:hover,input:focus,textarea:hover,textarea:focus,select:hover,select:focus{
     top: 50%;
     transform: translate(-50%,-50%);
     color: white;
+    user-select: none;
+    cursor: pointer;
 }
 #error_board{
     position: absolute;
